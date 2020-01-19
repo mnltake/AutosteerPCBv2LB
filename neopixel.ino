@@ -1,59 +1,20 @@
-// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
-// released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
-
-#include <Adafruit_NeoPixel.h>
-#ifdef __AVR__
-  #include <avr/power.h>
-#endif
-
-// Which pin on the Arduino is connected to the NeoPixels?
-// On a Trinket or Gemma we suggest changing this to 1
-#define PIN            6
-
-// How many NeoPixels are attached to the Arduino?
-#define  NUMPIXELS     13
-
-// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-int delayval = 500; // delay for half a second
-
-void lightbar(float distanceFromLine ,byte cmPerLightbarPixel)
-  int level = constrain (distanceFromLine / cmPerLightbarPixcel , -(NUMPIXELS-1) ,NUMPIXELS-1);
-  byte levelcolor =[[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255],[0,0,255],[10,10,10],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0],[255,0,0]];
-  int n = int(level/2 ) + (NUMPIXELS-1) /2;
-  for (int i = 0 ;i < NUMPIXELS; i++){
+void lightbar(float distanceFromLine ,byte cmPerLightbarPixcel ){
+  byte centerpixcel = (NUMPIXELS-1) /2;
+  int level = constrain (distanceFromLine * 0.1 / cmPerLightbarPixcel , -centerpixcel ,centerpixcel);
+  byte levelcolor[NUMPIXELS][3];
+  for (int i =0 ;i < centerpixcel;i++){ //Right
+    levelcolor[i][0]=0; levelcolor[i][1]=255; levelcolor[i][2]=0;//Green
+  }
+  for (int i = centerpixcel;i < NUMPIXELS;i++){ //Left
+    levelcolor[i][0]=255; levelcolor[i][1]=0; levelcolor[i][2]=0;  //Red
+  }
+  int n = level + centerpixcel;
+  for (int i = 0 ;i < NUMPIXELS; i++){ //Clear All pixel
     pixels.setPixelColor(i,0,0,0);
   }
-  pixels.setPixelColor(i, pixels.Color(levelcolor[n][0],levelcolor[n][1],levelcolor[n][2])); 
-  pixels.show();
-
-
-
-void setup() {
-  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-#if defined (__AVR_ATtiny85__)
-  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-#endif
-  // End of trinket special code
-
-  pixels.begin(); // This initializes the NeoPixel library.
-}
-
-void loop() {
-
-  // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(0,150,0)); // Moderately bright green color.
-
-    pixels.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-
+  if (distanceFromLine < 32020){ //autosteer ON
+    pixels.setPixelColor(n, pixels.Color(levelcolor[n][0],levelcolor[n][1],levelcolor[n][2])); //Light Bar
+    pixels.setPixelColor(centerpixcel,10,10,0);//Yellow center
   }
+  pixels.show();
 }

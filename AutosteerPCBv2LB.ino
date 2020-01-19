@@ -2,13 +2,16 @@
 //### Setup Zone ###########################################################################################
 //##########################################################################################################
 
+  #define NUMPIXELS   13
+  #define Neopixel_Pin 9
+  #define cmPerLightbarPixel  4
   #define GPS_Refresh 10                 // Enter the Hz refresh rate, example 5 or 10 or 8 with ublox
                                          // Best is leave it at 10
                                         
   #define Motor_Valve_Driver_Board 1    // 1 =  Steering Motor/valves + Cytron MD30C, MD13A Driver
                                         // 2 =  Steering Motor/valves + IBT 2  Driver
                                 
-  #define A2D_Convertor_Mode 1          // 0 = No ADS, connect Wheel Angle Sensor (WAS) to Arduino A0
+  #define A2D_Convertor_Mode 0          // 0 = No ADS, connect Wheel Angle Sensor (WAS) to Arduino A0
                                             // Really try to use the ADS, it is much much better.
                                         // 1 = ADS1115 Single Input Mode - Connect Signal to A0
                                             // These sensors are DIY installed ones.
@@ -110,6 +113,15 @@
     BNO055 IMU(A);  // create an instance
   #endif
   
+  #if NUMPIXELS > 0
+    #include <Adafruit_NeoPixel.h>
+    Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, Neopixel_Pin, NEO_GRB + NEO_KHZ800);
+  #endif
+
+  #ifdef __AVR__
+    #include <avr/power.h>
+  #endif
+
   #define EEP_Ident 0xEDFE
   
    //Variables for settings  
@@ -134,9 +146,9 @@
 
   
   const unsigned int LOOP_TIME = 1000/GPS_Refresh;      
-  unsigned int lastTime = LOOP_TIME;
-  unsigned int currentTime = LOOP_TIME;
-  unsigned int dT = 50000;
+  unsigned long lastTime = LOOP_TIME;
+  unsigned long currentTime = LOOP_TIME;
+  unsigned long dT = 50000;
   byte count = 0;
   byte watchdogTimer = 20;
   byte serialResetTimer = 100; //if serial buffer is getting full, empty it
@@ -245,7 +257,11 @@ void setup()
       steerSettings.steeringPositionZero = (SteerPosZero);  //use new steering zero offset now
       EEPROM.put(8, steerSettings);   
     }    
-  } 
+  }
+
+  #if NUMPIXELS > 0
+    pixels.begin();
+  #endif
 }// End of Setup
 
 void loop()
@@ -557,6 +573,12 @@ void loop()
 
   #endif
   
+  #if NUMPIXELS >0
+    lightbar(distanceFromLine ,cmPerLightbarPixel);
+  #endif
+
+
+
 } // end of main loop
 
 //////////////////////////////////    Ethernet  //////////////////////////////
