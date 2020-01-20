@@ -2,7 +2,7 @@
 //### Setup Zone ###########################################################################################
 //##########################################################################################################
 
-  #define NUMPIXELS   13
+  #define NUMPIXELS   13                 //Odd number  no use =0 
   #define Neopixel_Pin 9
   #define cmPerLightbarPixel  4
   #define GPS_Refresh 10                 // Enter the Hz refresh rate, example 5 or 10 or 8 with ublox
@@ -116,6 +116,8 @@
   #if NUMPIXELS > 0
     #include <Adafruit_NeoPixel.h>
     Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, Neopixel_Pin, NEO_GRB + NEO_KHZ800);
+    const byte centerpixcel = (NUMPIXELS-1) /2;
+    byte levelcolor[NUMPIXELS][3];
   #endif
 
   #ifdef __AVR__
@@ -261,6 +263,12 @@ void setup()
 
   #if NUMPIXELS > 0
     pixels.begin();
+    for (int i =0 ;i < centerpixcel;i++){ //Right
+      levelcolor[i][0]=0; levelcolor[i][1]=255; levelcolor[i][2]=0; //Green
+    }
+    for (int i = centerpixcel;i < NUMPIXELS;i++){ //Left
+      levelcolor[i][0]=255; levelcolor[i][1]=0; levelcolor[i][2]=0; //Red
+    }
   #endif
 }// End of Setup
 
@@ -275,7 +283,7 @@ void loop()
 	 */
 
 	currentTime = millis();
-	unsigned int time = currentTime;
+	unsigned long time = currentTime;
 
 	if (currentTime - lastTime >= LOOP_TIME)
 	{
@@ -574,11 +582,8 @@ void loop()
   #endif
   
   #if NUMPIXELS >0
-    lightbar(distanceFromLine ,cmPerLightbarPixel);
+    lightbar(distanceFromLine);
   #endif
-
-
-
 } // end of main loop
 
 //////////////////////////////////    Ethernet  //////////////////////////////
