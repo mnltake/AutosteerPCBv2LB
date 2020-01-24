@@ -266,9 +266,10 @@ void setup()
     for (int i =0 ;i < centerpixcel;i++){ //Right
       levelcolor[i][0]=0; levelcolor[i][1]=255; levelcolor[i][2]=0; //Green
     }
-    for (int i = centerpixcel;i < NUMPIXELS;i++){ //Left
+    for (int i = centerpixcel+1;i < NUMPIXELS;i++){ //Left
       levelcolor[i][0]=255; levelcolor[i][1]=0; levelcolor[i][2]=0; //Red
     }
+    levelcolor[centerpixcel][0]=10;levelcolor[centerpixcel][1]=10;levelcolor[centerpixcel][2]=0; //Center Yellow
   #endif
 }// End of Setup
 
