@@ -173,4 +173,3 @@ void BNO055::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8
         dest[i++] = Wire.read(); 
     }         
 }
-
