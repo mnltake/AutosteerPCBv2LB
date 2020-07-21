@@ -1,4 +1,8 @@
 # AutosteerPCBv2LB
+
+# This is for AgOpenGPS_v3 .
+# For the latest version is here https://github.com/MattWoodhead/AutosteerPCBv2LB
+
 forked from farmerbriantee/AgOpenGPS
 
 WS2812B(Neopixel)　strips
